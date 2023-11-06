@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 using namespace std;
 
 #define Max 10
@@ -10,20 +10,33 @@ int numStates, numAlphabet;
 string state[Max], alphabet[Max], start, finish;
 char tran[Max][Max][Max];
 vector<string> dfaState;
-map<string,vector<string>> Dfa;
+map<string, vector<string>> Dfa;
+
+void nfaInput();
+string dfaPrinting();
+int indexShow(string given);
+string mapSearch();
+void dfaMaking();
 
 
-string mapSearch() {
-    for (const auto& entry : Dfa) {
-        for (const string& transition : entry.second) {
+
+string mapSearch()
+{
+    for (const auto &entry : Dfa)
+    {
+        for (const string &transition : entry.second)
+        {
             bool isInDfaState = false;
-            for (const string& inDfaState : dfaState) {
-                if (inDfaState == transition) {
+            for (const string &inDfaState : dfaState)
+            {
+                if (inDfaState == transition)
+                {
                     isInDfaState = true;
                     break;
                 }
             }
-            if (!isInDfaState) {
+            if (!isInDfaState)
+            {
                 // Found an unprocessed transition
                 return transition;
             }
@@ -34,48 +47,73 @@ string mapSearch() {
     return "-1";
 }
 
+string dfaPrinting()
+{
+    for (const auto &entry : Dfa)
+    {
+        cout << entry.first << " -> ";
+        for (const string &transition : entry.second)
+        {
+            cout << transition;
+        }
+        cout << endl;
+    }
+}
 
-void dfaMaking(){
-    dfaState.push_back(start);
-    int startIndex=-1;
-    for(int i=0;i<numStates;i++){
-        if(state[i]==start){
-            startIndex=i;
-            break;
+int indexShow(string given)
+{
+    for (int i = 0; i < numStates; i++)
+    {
+        if (state[i] == given)
+        {
+            return i;
         }
     }
-    vector<string>temp;
-    for(int i=0;i<numAlphabet;i++){
-        string s="";
-        for(int j=0;tran[startIndex][i][j];j++){
+}
+
+void dfaMaking()
+{
+    dfaState.push_back(start);
+    int startIndex = indexShow(start);
+
+    vector<string> temp;
+    for (int i = 0; i < numAlphabet; i++)
+    {
+        string s = "";
+        for (int j = 0; tran[startIndex][i][j]; j++)
+        {
             s += tran[startIndex][i][j];
         }
         temp.push_back(s);
     }
-    Dfa.insert({start,temp});
+    Dfa.insert({start, temp});
     string newState;
-    while((newState=mapSearch()) != "-1"){
-        string s[numAlphabet];
-        for(int i=0;newState[i];i++){
-
-            int index =-1;
-            for(int j=0;j<numStates;j++){
-                if(state[j]==string(1,newState[i])){
-                    index = j;
-                    break;
+    while ((newState = mapSearch()) != "-1")
+    {   
+        vector<string> temp;
+        for (int i = 0; i < numAlphabet ; i++)
+        {
+            string s = "";
+            for (int j = 0;newState[j] ; j++)
+            {
+                int index = indexShow(string(1, newState[j]));
+                
+                for (int k = 0; tran[index][i][k]; k++)
+                {
+                    s += tran[index][j][k];
                 }
+                
             }
+            temp.push_back(s);
             
-
-
         }
+        Dfa.insert({newState, temp});
     }
-   
 }
 
 void nfaInput()
 {
-    ifstream myfile("nfaInput.txt");
+    ifstream myfile("nfaInput2.txt");
 
     if (!myfile.is_open())
     {
@@ -83,7 +121,8 @@ void nfaInput()
         return;
     }
     myfile >> numStates >> numAlphabet;
-    cout<<numStates <<endl<<numAlphabet<<endl;
+    cout << numStates << endl
+         << numAlphabet << endl;
     // cout << "Enter number of states: ";
     // cin >> numStates;
     // cout << "Enter number of Alphabets: ";
@@ -92,9 +131,9 @@ void nfaInput()
     // Input state names
     for (int i = 0; i < numStates; i++)
     {
-        
+
         myfile >> state[i];
-        cout << " state " << i + 1 << ": "<<state[i]<<endl;
+        cout << " state " << i + 1 << ": " << state[i] << endl;
     }
 
     // Input alphabet symbols
@@ -102,7 +141,7 @@ void nfaInput()
     {
         // cout << "Enter name for alphabet " << j + 1 << ": ";
         myfile >> alphabet[j];
-        cout<< "Alphabet: "<<alphabet[j]<<endl;
+        cout << "Alphabet: " << alphabet[j] << endl;
     }
 
     // cout << "Enter the transition table: " << endl;
@@ -122,8 +161,6 @@ void nfaInput()
         }
     }
 
-   
-
     cout << "Transition table:" << endl;
 
     for (int i = 0; i < numStates; i++)
@@ -134,22 +171,25 @@ void nfaInput()
             for (int k = 0; k < tran[i][j][k]; k++)
             {
                 cout << tran[i][j][k] << "";
-            }cout<<" ";
+            }
+            cout << " ";
         }
         cout << endl;
     }
-     // cout<<"Enter the start index: "<<endl;
+    // cout<<"Enter the start index: "<<endl;
     myfile >> start;
-    cout<<"Start: "<<start<<endl;
+    cout << "Start: " << start << endl;
     // cout<<"Enter the endding state: "<<endl;
     myfile >> finish;
-    cout<<"Finish: "<<finish<<endl;
+    cout << "Finish: " << finish << endl;
 }
 
 int main()
 {
 
     nfaInput();
+    dfaMaking();
+    dfaPrinting();
 
     return 0;
 }
