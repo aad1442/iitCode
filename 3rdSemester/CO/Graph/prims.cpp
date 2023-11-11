@@ -1,90 +1,143 @@
-#include<iostream>
-#include<fstream>
-#include<map>
-#include<climits>
+#include <iostream>
+#include <map>
+#include <queue>
+#include <fstream>
+#include <climits>
 using namespace std;
-#define max 20
-int vertices, edges;
-int graph[max][max]={0};
-map<char, int> mp;
-void read(){
-    ifstream file("graph.txt");
-    if(!file.is_open()){
-        cerr<< "Can't open the file. "<< endl;
+
+#define Max 20
+
+int numVertices, numEdges;
+int graph[Max][Max] = {0};
+
+map<string, int> names;
+int previous[Max];
+int key[Max];
+bool inMST[Max];
+
+void printGraph() {
+    for (int i = 1; i <= names.size(); i++) {
+        for (int j = 1; j <= names.size(); j++) {
+            cout << graph[i][j] << "  ";
+        }
+        cout << endl;
+    }
+}
+
+void getInput() {
+    fstream myfile("lab1.txt");
+    if (!myfile.is_open()) {
+        cerr << "Failed to open the file" << endl;
         exit(1);
     }
-    file >> vertices >> edges;
-    for(int i=0;i<vertices;i++){
-        mp['a'+i]=0+i;
-    }
-    while(!file.eof()){
-        char u,v;
-        int w;
-        file >> u >> v >> w;
-        graph[mp[u]][mp[v]]=w;
-        graph[mp[v]][mp[u]]=w;
-    }
-    for(int i=0;i<vertices;i++){
-        for(int j=0;j<vertices;j++){
-            cout<< graph[i][j] << " ";
-        }cout<<endl;
-    }
 
-    
+    myfile >> numVertices >> numEdges;
+    string s;
+    int w, x, y, z, i = 0;
 
-}
-
-int extractMin(int key[], bool mstSet[]){
-    int min = INT_MAX , minVer= -1;
-    for(int i=0;i<vertices;i++){
-        if(key[i]< min && mstSet[i]==false){
-            min = key[i];
-            minVer = i;
+    while (myfile >> s) {
+        if (s == "END")
+            break;
+        if (names[s] == 0) {
+            names[s] = ++i;
         }
+        x = names[s];
+        myfile >> s;
+        if (names[s] == 0) {
+            names[s] = ++i;
+        }
+        y = names[s];
+        myfile >> w;
+        graph[x][y] = w;
+        graph[y][x] = w;
     }
-    return minVer;
+
+    cout << "file is closing " << endl;
+    myfile.close();
 }
-void printGraph(int parent[],int key[]){
-    for(int i=1;i<vertices;i++){
-        cout<< parent[i]<< " - "<< i << "  "<< graph[parent[i]][i]<< endl;
+
+void relax(int u, int v) {
+    if (key[v] > graph[u][v] && graph[u][v] != 0) {
+        key[v] = graph[u][v];
+        previous[v] = u;
     }
 }
 
-void primsAlgo( ){
-    int key[vertices], parent[vertices];
-    bool mstSet[vertices];
-    for(int i=0;i<vertices;i++){
-        key[i]= INT_MAX;
-        parent[i]=-1;
-        mstSet[i]= false;
+void MST() {
+    for (auto u : names) {
+        key[u.second] = INT_MAX;
+        previous[u.second] = -1;
+        inMST[u.second] = false;
     }
-    key[0]= 0;
-    for(int i=0;i<vertices;i++){
-        int u = extractMin(key,mstSet);
-        cout<< u <<" -"<<" u"<<endl;
-        for(int i=0;i<vertices;i++){
-            if(graph[u][i] && key[i]>graph[u][i] && mstSet[i]==false){
-                parent[i]=u;
-                key[i]=graph[u][i];
 
-                cout<< "key"<<i<<"-"<<key[i]<<"   "<<u<<"    "<<i<< endl<<endl;
+    key[names.begin()->second] = 0;
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
+    q.push({key[names.begin()->second], names.begin()->second});
+
+    while (!q.empty()) {
+        int u = q.top().second;
+        q.pop();
+
+        if (inMST[u]) {
+            continue; // Skip if u is already in MST
+        }
+
+        inMST[u] = true;
+
+        for (int v = 1; v <= names.size(); v++) {
+            if (graph[u][v] && !inMST[v]) {
+                relax(u, v);
+                q.push({key[v], v});
             }
         }
-        mstSet[u]=true;
     }
-    // for(int i=0;i<vertices;i++){
-    //     cout<< "key"<<i<<"-"<<key[i]<<endl;
-    // }
-    cout<< endl;
-    printGraph(parent,key);
-
- 
-    
 }
 
 
-int main()
-{
-    read();
-    primsAlgo();
+void printingMST(){
+    for(auto u:names){
+        cout<<u.first<<"-- ";
+        for(auto v: names){
+            if(previous[names[u.first]]==v.second){
+                cout<<v.first<<"  --->";
+            }
+        }
+        cout<<key[names[u.first]]<<endl;
+    }
+}
+
+
+int savings(){
+    int totalWeight=0,usedWeight=0;
+    for(int i=1;i<=names.size();i++){
+        for(int j=1;j<=names.size();j++){
+            totalWeight+=graph[i][j];
+        }
+    }
+    for(auto u:names){
+        usedWeight += key[u.second];
+    }
+    //cout<<"Total"<<totalWeight<<" Used "<<usedWeight;
+    return (totalWeight/2) - usedWeight;
+}
+int main() {
+    getInput();
+    printGraph();
+
+    for (auto u : names) {
+        cout << u.first << "  " << u.second << endl;
+    }
+
+    MST();
+
+    for (int i = 1; i <= names.size(); i++) {
+        cout << "Vertex: " << i << " Key: " << key[i] << " Previous: " << previous[i] << endl;
+    }
+    cout<<endl<<endl;
+    printingMST();
+    cout<<endl<<endl<<endl<<endl;
+    cout<<"Savings :"<<savings()<<endl;
+
+    return 0;
 }

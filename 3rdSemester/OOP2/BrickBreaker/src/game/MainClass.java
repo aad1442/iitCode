@@ -3,6 +3,7 @@ package game;
 import javax.swing.JFrame;
 
 public class MainClass {
+	
 
 	public static void main(String[] args) {
 		JFrame f = new JFrame();
