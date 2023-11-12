@@ -119,7 +119,7 @@ void dfaMaking()
 
 void nfaInput()
 {
-    ifstream myfile("nfaInput2.txt");
+    ifstream myfile("nfaInput.txt");
 
     if (!myfile.is_open())
     {

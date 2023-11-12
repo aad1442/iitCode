@@ -12,14 +12,6 @@ char tran[Max][Max][Max];
 vector<string> dfaState;
 map<string, vector<string>> Dfa;
 
-void nfaInput();
-string dfaPrinting();
-int indexShow(string given);
-string mapSearch();
-void dfaMaking();
-
-
-
 string mapSearch()
 {
     for (const auto &entry : Dfa)
@@ -43,21 +35,23 @@ string mapSearch()
         }
     }
 
-    // If no unprocessed transition is found, return a special value
+    // If no unprocessed transition is found, return "-1"
     return "-1";
 }
 
-string dfaPrinting()
+void dfaPrinting()
 {
     for (const auto &entry : Dfa)
     {
         cout << entry.first << " -> ";
         for (const string &transition : entry.second)
         {
-            cout << transition;
+            cout << transition << " ";
         }
         cout << endl;
     }
+
+    cout<<"Now I have successfully printed the dfa"<<endl;
 }
 
 int indexShow(string given)
@@ -69,10 +63,12 @@ int indexShow(string given)
             return i;
         }
     }
+    return -1; // Return -1 if the state is not found
 }
 
 void dfaMaking()
 {
+    cout<<"dfaMaking started"<<endl;
     dfaState.push_back(start);
     int startIndex = indexShow(start);
 
@@ -87,33 +83,43 @@ void dfaMaking()
         temp.push_back(s);
     }
     Dfa.insert({start, temp});
+    cout<<Dfa.size()<<endl;
     string newState;
+    int p=0;
     while ((newState = mapSearch()) != "-1")
-    {   
+    {
+        cout<<"newState: "<<newState<<endl;
         vector<string> temp;
-        for (int i = 0; i < numAlphabet ; i++)
+        for (int i = 0; i < numAlphabet; i++)
         {
             string s = "";
-            for (int j = 0;newState[j] ; j++)
+            for (int j = 0; newState[j]; j++)
             {
                 int index = indexShow(string(1, newState[j]));
-                
+
                 for (int k = 0; tran[index][i][k]; k++)
                 {
-                    s += tran[index][j][k];
+                    s += tran[index][i][k];
                 }
-                
             }
             temp.push_back(s);
-            
         }
         Dfa.insert({newState, temp});
+        cout<<"DFasize"<<Dfa.size()<<endl;
+        cout<<"DFaStatesize"<<dfaState.size()<<endl;
+        dfaState.push_back(newState); // Don't forget to add the new state to the list of processed states
+        p++;
+        if(p==5)break;
+    
     }
+
+
+    cout<<"Successfully dfa making done"<<endl;
 }
 
 void nfaInput()
 {
-    ifstream myfile("nfaInput2.txt");
+    ifstream myfile("nfaInput.txt");
 
     if (!myfile.is_open())
     {
@@ -123,15 +129,10 @@ void nfaInput()
     myfile >> numStates >> numAlphabet;
     cout << numStates << endl
          << numAlphabet << endl;
-    // cout << "Enter number of states: ";
-    // cin >> numStates;
-    // cout << "Enter number of Alphabets: ";
-    // cin >> numAlphabet;
 
     // Input state names
     for (int i = 0; i < numStates; i++)
     {
-
         myfile >> state[i];
         cout << " state " << i + 1 << ": " << state[i] << endl;
     }
@@ -139,23 +140,18 @@ void nfaInput()
     // Input alphabet symbols
     for (int j = 0; j < numAlphabet; j++)
     {
-        // cout << "Enter name for alphabet " << j + 1 << ": ";
         myfile >> alphabet[j];
         cout << "Alphabet: " << alphabet[j] << endl;
     }
-
-    // cout << "Enter the transition table: " << endl;
 
     for (int i = 0; i < numStates; i++)
     {
         for (int j = 0; j < numAlphabet; j++)
         {
-            // cout << "For state " << state[i] << " and alphabet " << alphabet[j] << ": Enter number of transitions: ";
             int t;
             myfile >> t;
             for (int k = 0; k < t; k++)
             {
-                // cout << "Enter transition for state " << state[i] << " and alphabet " << alphabet[j] << " to state: ";
                 myfile >> tran[i][j][k];
             }
         }
@@ -168,25 +164,23 @@ void nfaInput()
         cout << " " << state[i] << "  : ";
         for (int j = 0; j < numAlphabet; j++)
         {
-            for (int k = 0; k < tran[i][j][k]; k++)
+            for (int k = 0; tran[i][j][k]; k++)
             {
-                cout << tran[i][j][k] << "";
+                cout << tran[i][j][k] << " ";
             }
-            cout << " ";
+            cout << endl;
         }
-        cout << endl;
     }
-    // cout<<"Enter the start index: "<<endl;
+
     myfile >> start;
     cout << "Start: " << start << endl;
-    // cout<<"Enter the endding state: "<<endl;
     myfile >> finish;
     cout << "Finish: " << finish << endl;
+    cout<<"done"<<endl;
 }
 
 int main()
 {
-
     nfaInput();
     dfaMaking();
     dfaPrinting();
