@@ -47,7 +47,7 @@ void identify_comments(const char *filename) {
 }
 
 int main() {
-    const char *filename = "sample.c"; // Replace with your file name
+    const char *filename = "test_code.c"; // Replace with your file name
     identify_comments(filename);
     return 0;
 }

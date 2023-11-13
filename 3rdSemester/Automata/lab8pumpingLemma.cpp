@@ -57,6 +57,12 @@ void LanguageCheck(int p, int q)
             wp += wy;
         }
         wp += wz;
+
+         bool flag = isLanguage(wp,p,q);
+        if(!flag){
+            cout<<"String is not in Language ."<<endl;
+            break;
+        }
     }
     // Do something with the generated string 'wp' here if needed.
 }
