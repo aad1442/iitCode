@@ -21,7 +21,7 @@ void identify_comments(const char *filename) {
             char *end_comment = strstr(line, "*/");
             if (end_comment) {
                 in_multi_line_comment = false;
-                printf("Multi-line comment: %.*s\n", (int)(end_comment - line), line);
+                printf("1Multi-line comment: %.*s\n", (int)(end_comment - line), line);
             }
         } else {
             char *single_line_comment = strstr(line, "//");
@@ -34,10 +34,10 @@ void identify_comments(const char *filename) {
 
             if (start_multi_line_comment) {
                 if (end_multi_line_comment) {
-                    printf("Multi-line comment: %.*s\n", (int)(end_multi_line_comment - start_multi_line_comment + 2), start_multi_line_comment);
+                    printf("2Multi-line comment: %.*s\n", (int)(end_multi_line_comment - start_multi_line_comment + 2), start_multi_line_comment);
                 } else {
                     in_multi_line_comment = true;
-                    printf("Multi-line comment: %s\n", start_multi_line_comment);
+                    printf("3Multi-line comment: %s\n", start_multi_line_comment);
                 }
             }
         }

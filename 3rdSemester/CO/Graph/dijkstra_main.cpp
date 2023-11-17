@@ -32,6 +32,7 @@ void read() {
         y = names[s];
         file >> w;
         graph[x][y] = w;
+        graph[y][x] = w;
     }
 
     cout << "file is closing" << endl;

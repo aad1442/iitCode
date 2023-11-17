@@ -1,8 +1,9 @@
 Dhaka1 Chattagram2 3
-Chattagram2 Khulna3 4
-Khulna3 Bharmanbaria4 -5
-Bharmanbaria4 Chandput5 6
-Chattagram2 Bharmanbaria4 1
-Chattagram2 Chandput5 7
+Khulna3 Chattagram2 4
+Bharmanbaria4 Khulna3 -5
 Dhaka1 Khulna3 8
+Dhaka1 Chandpur5 -4
+Chattagram2 Chandpur5 7
+Chattagram2 Bharmanbaria4 1
 Bharmanbaria4 Dhaka1 2
+Chandpur5 Bharmanbaria4 6

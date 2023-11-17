@@ -128,8 +128,8 @@ void dfaMaking()
         dfaState.push_back(newState);
         dfaStatePrinting();
         dfaPrinting();
-        p++;
-        if(p==5)break;
+        // p++;
+        // if(p==5)break;
     
     }
 }

@@ -2,18 +2,6 @@
 using namespace std;
 
 vector<vector<int>>graph;
-const int maxV = 20;
-int numV, numE;
-int source,des;
-vector<int>previous;
-
-void printpath(int source, int sink){
-    if(sink==-1)
-        return;
-    printpath(source,previous[sink]);
-    cout<<" "<< sink<< " ";
-}
-
 
 bool bfs(int source, int dest, int v, vector<int>&previous)
 {
@@ -41,7 +29,7 @@ bool bfs(int source, int dest, int v, vector<int>&previous)
 
 int ford(int source, int dest, int v)
 {
-    previous.assign(v,0);
+    vector<int>previous(v);
     int maxFlow=0;
     while(bfs(source, dest, v, previous))
     {
@@ -55,28 +43,24 @@ int ford(int source, int dest, int v)
             graph[u][previous[u]] += minCap;
         }
         maxFlow+=minCap;
-        printpath(source,des);
-        cout<<"     "<<minCap<<endl;
     }
     return maxFlow;
 }
 
-void read() {
-    ifstream myfile("networkFlowLabTask.txt");
-    myfile >> numV;
-    myfile >> source>>des>>numE;
-    int u, v, w;
-    graph.assign(numV+1, vector<int>(v+1,0));
-    for (int i = 0; i < numE; i++) {
-        myfile >> u >> v >> w;
-        graph[u][v] = w;
-        graph[v][v] = w;
-    }
-}
-
 int main()
 {
-    read();
-    cout<<"The Bandwith is: "<<endl<<ford(source, des, numV+1)<<endl;
+    freopen("networkFlowLabTask.txt", "r", stdin);
+    int v,e,x,y,w,source,dest;
+    cin>>v;
+    cin>>source>>dest>>e;
+    graph.assign(v+1, vector<int>(v+1,0));
+
+    for(int i=0; i<e; i++)
+    {
+        cin>>x>>y>>w;
+        graph[x][y] = w;
+        graph[y][x] = w;
+    }
+    cout<<"The Bandwith is: "<<ford(source, dest, v+1)<<endl;
     return 0;
 }
