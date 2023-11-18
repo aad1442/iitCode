@@ -9,7 +9,7 @@ struct rod {
 
 vector<int> dp(mx, -1);
 
-int rod_cut(struct rod rods[], int n, vector<int>& selected_segments) {
+int rod_cut(struct rod rods[], int n, int cutting_cost, vector<int>& selected_segments) {
     if (dp[n] >= 0) {
         return dp[n];
     }
@@ -21,7 +21,7 @@ int rod_cut(struct rod rods[], int n, vector<int>& selected_segments) {
         int best_cut = -1;
 
         for (int i = 0; i < n; i++) {
-            int current_cut = rods[i].price + rod_cut(rods, n - i - 1, selected_segments);
+            int current_cut = rods[i].price + rod_cut(rods, n - i - 1, cutting_cost, selected_segments) - cutting_cost;
             if (current_cut > q) {
                 q = current_cut;
                 best_cut = i;
@@ -46,20 +46,22 @@ void print_cut_segments(const vector<int>& selected_segments, int n) {
 }
 
 int main() {
-    freopen("rod.txt", "r", stdin);
+    freopen("rodCost.txt", "r", stdin);
 
-    int num;
+    int num, cutting_cost;
     cin >> num;
 
     for (int i = 0; i < num; i++) {
         cin >> rods[i].len >> rods[i].price;
     }
 
+    cin >> cutting_cost;
+
     int n;
     cin >> n;
 
     vector<int> selected_segments(mx, -1);
-    int res = rod_cut(rods, n, selected_segments);
+    int res = rod_cut(rods, n, cutting_cost, selected_segments);
 
     cout << "Maximum value: " << res << endl;
     cout << "Cutting segments:" << endl;
